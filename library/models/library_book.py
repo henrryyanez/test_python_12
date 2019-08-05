@@ -27,6 +27,18 @@ class LibraryBook(models.Model):
         ('name_uniq', 'unique (name)', "El libro ya está agregado!!"),
     ]
 
+    categ_count = fields.Integer(
+        string="Nro categorías",
+        compute="_count_categ"
+    )
+
+    #def _count_categ(self):
+    #    self.categ_count = len(self.category_ids)
+
+    def _count_categ(self):
+        for book in self:
+                book.categ_count = len(book.category_ids)
+
     @api.constrains("isbn")
     def check_isbn(self):
         isbn = self.search([['id', '!=', self.id]]).mapped("isbn")
