@@ -1,12 +1,13 @@
 # -*- coding: utf-8 -*-
 
-from odoo import models, fields
+from odoo import api, models, fields, exceptions
 
 class LibraryBook(models.Model):
     _name = 'library.book'
 
     name = fields.Char(string='Book', default="Nuevo Libro",)
     description = fields.Text(string='Description')
+    isbn = fields.Char(string='ISBN')
 
     category_id = fields.Many2one(
         comodel_name="library.category", string="Categoría Many2one",
@@ -25,3 +26,9 @@ class LibraryBook(models.Model):
     _sql_constraints = [
         ('name_uniq', 'unique (name)', "El libro ya está agregado!!"),
     ]
+
+    @api.constrains("isbn")
+    def check_isbn(self):
+        isbn = self.search([['id', '!=', self.id]]).mapped("isbn")
+        if self.isbn and self.isbn in isbn:
+            raise exceptions.ValidationError("ISBN Duplicado")
