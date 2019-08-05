@@ -21,3 +21,7 @@ class LibraryBook(models.Model):
         inverse_name="book_id",
         string="Categorías One2many",
         required=False)
+
+    _sql_constraints = [
+        ('name_uniq', 'unique (name)', "El libro ya está agregado!!"),
+    ]
